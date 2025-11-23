@@ -21,11 +21,18 @@ module Ferrum
     GOTO_WAIT = ENV.fetch("FERRUM_GOTO_WAIT", 0.1).to_f
 
     extend Forwardable
+    # Ruby 3.4 compatible - non-setter methods can use delegate
     delegate %i[at_css at_xpath css xpath
-                current_url current_title url title body doctype content=
+                current_url current_title url title body doctype
                 execution_id execution_id! evaluate evaluate_on evaluate_async execute evaluate_func
                 add_script_tag add_style_tag] => :main_frame
-    delegate %i[base_url default_user_agent timeout timeout=] => :@options
+
+    # Ruby 3.4 compatible - setter methods must use def_delegator
+    def_delegator :main_frame, :content=
+
+    # Ruby 3.4 compatible - timeout= must use def_delegator
+    delegate %i[base_url default_user_agent timeout] => :@options
+    def_delegator :@options, :timeout=
 
     include Animation
     include Screencast

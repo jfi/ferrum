@@ -61,7 +61,9 @@ module Ferrum
 
   class Client
     extend Forwardable
-    delegate %i[timeout timeout=] => :options
+    # Ruby 3.4 compatible - timeout= must use def_delegator
+    delegate %i[timeout] => :options
+    def_delegator :options, :timeout=
 
     attr_reader :ws_url, :options, :subscriber
 

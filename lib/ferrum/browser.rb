@@ -33,7 +33,15 @@ module Ferrum
 
     attr_reader :client, :process, :contexts, :options
 
-    delegate %i[timeout timeout= base_url base_url= default_user_agent default_user_agent= extensions] => :options
+    # Ruby 3.4 compatible delegation - def_delegator works with setter methods
+    def_delegator :@options, :timeout
+    def_delegator :@options, :timeout=
+    def_delegator :@options, :base_url
+    def_delegator :@options, :base_url=
+    def_delegator :@options, :default_user_agent
+    def_delegator :@options, :default_user_agent=
+    def_delegator :@options, :extensions
+
     delegate %i[command] => :client
 
     #
