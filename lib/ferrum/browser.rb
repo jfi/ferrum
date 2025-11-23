@@ -17,9 +17,10 @@ module Ferrum
     extend Forwardable
     delegate %i[default_context] => :contexts
     delegate %i[targets create_target page pages windows] => :default_context
+    # Ruby 3.4 compatible - non-setter methods can use delegate
     delegate %i[go_to goto go back forward refresh reload stop wait_for_reload
                 at_css at_xpath css xpath current_url current_title url title
-                body doctype content=
+                body doctype
                 headers cookies network downloads
                 mouse keyboard
                 screenshot pdf mhtml viewport_size device_pixel_ratio
@@ -27,9 +28,13 @@ module Ferrum
                 frames frame_by main_frame
                 evaluate evaluate_on evaluate_async execute evaluate_func
                 add_script_tag add_style_tag bypass_csp
-                on position position=
-                playback_rate playback_rate=
+                on position playback_rate
                 disable_javascript set_viewport resize] => :page
+
+    # Ruby 3.4 compatible - setter methods must use def_delegator
+    def_delegator :page, :content=
+    def_delegator :page, :position=
+    def_delegator :page, :playback_rate=
 
     attr_reader :client, :process, :contexts, :options
 
